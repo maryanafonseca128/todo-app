@@ -2,8 +2,8 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import TaskList from './screens/TaskList';
-import CreateTask from './screens/CreateTask';
+import TaskList from './app/index';
+import CreateTask from './app/create';
 
 export type RootStackParamList = {
   TaskList: undefined;
