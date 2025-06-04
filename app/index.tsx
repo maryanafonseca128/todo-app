@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types';  // ajuste caminho conforme localização
- import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback } from 'react';
-import { useRouter } from 'expo-router'; // ✅ CORRETO
 
 type Task = {
   id: number;
@@ -13,11 +10,9 @@ type Task = {
   done?: boolean;
 };
 
-type Props = NativeStackScreenProps<RootStackParamList, 'TaskList'>;
-
-export default function TaskList({ navigation }: Props) {
+export default function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
-const router = useRouter();
+  const router = useRouter();
 
   const fetchTasks = () => {
     axios.get<Task[]>('http://127.0.0.1:8000/api/tasks')
@@ -25,14 +20,11 @@ const router = useRouter();
       .catch(error => console.error(error));
   };
 
-
-
-useFocusEffect(
-  useCallback(() => {
-    fetchTasks();
-  }, [])
-);
-
+  useFocusEffect(
+    useCallback(() => {
+      fetchTasks();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -50,8 +42,7 @@ useFocusEffect(
 
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() =>router.push('/create')
-}
+        onPress={() => router.push('/create')}
       >
         <Text style={styles.addButtonText}>＋ Nova tarefa</Text>
       </TouchableOpacity>
@@ -62,12 +53,12 @@ useFocusEffect(
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF7F8', // rosa clarinho
+    backgroundColor: '#FFF7F8',
     paddingHorizontal: 24,
     paddingTop: 40,
   },
   taskItem: {
-    backgroundColor: '#FFE4E6', // rosa suave
+    backgroundColor: '#FFE4E6',
     padding: 16,
     borderRadius: 12,
     marginBottom: 12,
@@ -78,7 +69,7 @@ const styles = StyleSheet.create({
   },
   taskTitle: {
     fontSize: 18,
-    color: '#6D214F', // vinho suave
+    color: '#6D214F',
     fontWeight: '500',
   },
   done: {
@@ -106,6 +97,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
-  
-}
-);
+});

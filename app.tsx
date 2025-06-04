@@ -1,33 +1,16 @@
-import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
 import TaskList from './app/index';
 import CreateTask from './app/create';
 
-export type RootStackParamList = {
-  TaskList: undefined;
-  CreateTask: undefined;
-};
-
-
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="TaskList">
-        <Stack.Screen
-          name="TaskList"
-          component={TaskList}
-          options={{ title: 'Lista de Tarefas' }}
-        />
-        <Stack.Screen
-          name="CreateTask"
-          component={CreateTask}
-          options={{ title: 'Criar Tarefa' }}
-        />
+        <Stack.Screen name="TaskList" component={TaskList} />
+        <Stack.Screen name="CreateTask" component={CreateTask} />
       </Stack.Navigator>
     </NavigationContainer>
   );

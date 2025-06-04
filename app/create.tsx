@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types';  // ajuste caminho conforme localização
+import { useRouter } from 'expo-router';
 
-
-type Props = NativeStackScreenProps<RootStackParamList, 'CreateTask'>;
-
-export default function CreateTask({ navigation }: Props) {
+export default function CreateTask() {
   const [title, setTitle] = useState('');
+  const router = useRouter();
 
   const handleCreate = () => {
     if (!title.trim()) {
@@ -19,7 +16,7 @@ export default function CreateTask({ navigation }: Props) {
     axios.post('http://127.0.0.1:8000/api/tasks', { title })
       .then(() => {
         setTitle('');
-        navigation.goBack();
+        router.back(); // Volta para a tela anterior (index)
       })
       .catch(() => {
         Alert.alert('Erro', 'Não foi possível salvar a tarefa');
