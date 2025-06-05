@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback } from 'react';
 
 type Task = {
   id: number;
@@ -20,6 +19,25 @@ export default function TaskList() {
       .catch(error => console.error(error));
   };
 
+  const handleDelete = (id: number) => {
+    Alert.alert(
+      'Confirmar Exclusão',
+      'Você tem certeza que deseja excluir esta tarefa?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: () => {
+            axios.delete(`http://127.0.0.1:8000/api/tasks/${id}`)
+              .then(() => fetchTasks()) // Recarrega a lista
+              .catch(error => console.error(error));
+          }
+        }
+      ]
+    );
+  };
+
   useFocusEffect(
     useCallback(() => {
       fetchTasks();
@@ -34,7 +52,15 @@ export default function TaskList() {
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.taskItem}>
-            <Text style={[styles.taskTitle, item.done && styles.done]}>{item.title}</Text>
+            <Text style={[styles.taskTitle, item.done && styles.done]}>
+              {item.title}
+            </Text>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => handleDelete(item.id)}
+            >
+              <Text style={styles.deleteButtonText}>Excluir</Text>
+            </TouchableOpacity>
           </View>
         )}
         contentContainerStyle={tasks.length === 0 && { flex: 1, justifyContent: 'center', alignItems: 'center' }}
@@ -66,15 +92,30 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   taskTitle: {
     fontSize: 18,
     color: '#6D214F',
     fontWeight: '500',
+    flex: 1,
+    marginRight: 10,
   },
   done: {
     textDecorationLine: 'line-through',
     color: '#A88CA0',
+  },
+  deleteButton: {
+    backgroundColor: '#FF6B6B',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   emptyText: {
     fontSize: 20,
