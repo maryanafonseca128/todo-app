@@ -1,14 +1,17 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 
+const router = useRouter();
+                      
 type Task = {
   id: number;
   title: string;
   done?: boolean;
 };
-
+ 
 export default function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const router = useRouter();
