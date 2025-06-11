@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, Platform } from 'react-native';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
@@ -22,24 +22,40 @@ export default function TaskList() {
       .catch(error => console.error(error));
   };
 
-  const handleDelete = (id: number) => {
-    Alert.alert(
-      'Confirmar Exclusão',
-      'Você tem certeza que deseja excluir esta tarefa?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: () => {
-            axios.delete(`http://127.0.0.1:8000/api/tasks/${id}`)
-              .then(() => fetchTasks()) // Recarrega a lista
-              .catch(error => console.error(error));
+ const handleDelete = (id: number) => {
+  console.log(id)
+    if(Platform.OS === 'android' || Platform.OS === 'ios'){
+      Alert.alert(
+        'Confirmar Exclusão',
+        'Você tem certeza que deseja excluir esta tarefa?',
+      
+
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Excluir',
+            style: 'destructive',
+            onPress: () => {
+              axios.delete(`http://127.0.0.1:8000/api/tasks/${id}`)
+                .then(() => {
+                  // Atualiza o estado removendo a tarefa deletada
+                  setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
+                })
+                .catch(error => console.error(error));
+            }
           }
-        }
-      ]
-    );
-  };
+        ]
+      );
+  }else {
+     axios.delete(`http://127.0.0.1:8000/api/tasks/${id}`)
+     .then(() => {
+     // Atualiza o estado removendo a tarefa deletada
+     setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
+    })
+    .catch(error => console.error(error));
+  }
+};
+
 
   useFocusEffect(
     useCallback(() => {
